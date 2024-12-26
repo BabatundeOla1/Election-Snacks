@@ -1,13 +1,15 @@
 package EVoter;
 
+import java.util.Scanner;
+
 public class Candidate {
     private String name;
     private String CandidateID;
-    private int countCandidateVote;
+    private int countVote;
     public Candidate(String name, String userID){
         this.name = name;
         this.CandidateID = userID;
-        this.countCandidateVote = 0;
+        this.countVote = 0;
     }
 
     public void setName(String name) {
@@ -15,11 +17,11 @@ public class Candidate {
         this.name = name;
     }
     public int getCountCandidateVote(){
-        return countCandidateVote;
+        return countVote;
     }
 
-    public void addVote(){
-        this.countCandidateVote++;
+    public void incrementCandidateVoteCount(){
+        this.countVote++;
     }
 
     public String getName() {
@@ -33,9 +35,7 @@ public class Candidate {
             throw new IllegalArgumentException("Invalid Name");
         }
     }
-    private void validateAge(String password){
-        if(password.matches(".*\\d.*")){
-            throw new IllegalArgumentException("Invalid Password");
-        }
-    }
+//    public int displayResult() {
+//        return countVote;
+//    }
 }

@@ -4,12 +4,8 @@ import java.util.Scanner;
 
 public class Election {
 
-    private String position;
-    private static Registration register = new Registration();
-    
-    public Election(String position){
-        this.position = position;
-    }
+    private static Inec inec = new Inec();
+
     public static void main(String[] args) {
         displayMenu();
     }
@@ -42,17 +38,16 @@ public class Election {
 
     private static void registerVoter(){
         String name = input("Enter name: ");
-        String registerGender = input("Enter gender: ");
-        char gender = registerGender.charAt(0);
         int age = Integer.parseInt(input("Enter age: "));
         String password = input("Enter password: ");
-        Voter voters = register.voterRegistration(age,name,gender,password);
+        Voter voters = inec.voterRegistration(age,name,password);
         display("Account created successfully!!" + "\n" + name  + " Your I.D is " + voters.getUserID());
         displayMenu();
     }
+
     private static void registerCandidate(){
         String name = input("Enter name: ");
-        Candidate candidates = register.candidateRegistration(name);
+        Candidate candidates = inec.candidateRegistration(name);
         display("Account created successfully!!" +  "\n" + name + " Your I.D is " + candidates.getCandidateID());
         displayMenu();
     }
@@ -86,17 +81,38 @@ public class Election {
     }
 
     private static void candidateLogin() {
-        String candidateID = input("Enter I.D: ");
-        Candidate candidate = register.findCandidateAccount(candidateID);
-        display("Login Successful.");
+        try{
+            String candidateID = input("Enter I.D: ");
+            Candidate candidate = inec.findCandidateAccount(candidateID);
+            if(candidate != null){
+                display("Login Successful.");
+            }
+            else {
+                display("Invalid Login details.");
+            }
+        }catch (IllegalArgumentException error){
+            display("Candidate not found. Login failed.");
+        }
+        candidateMenu();
     }
 
     private static void voterLogin(){
-        String voterID = input("Enter I.D: ");
-        String voterPassword = input("Enter Password: ");
-        Voter voter = register.findVoterAccount(voterID);
-        voter.setPassword(voterPassword);
-        display("Login Successful.");
+        try{
+            String voterID = input("Enter I.D: ");
+            String voterPassword = input("Enter Password: ");
+            Voter voter = inec.findVoterAccount(voterID);
+            boolean validateVoter = voter != null;
+            boolean validateVoterPassword = voter.getPassword().equals(voterPassword);
+            if(validateVoter && validateVoterPassword){
+                display("Login Successful.");
+            }
+            else {
+                display("Invalid Login details.");
+            }
+        }catch (IllegalArgumentException error){
+            display("Voter not found. Login failed.");
+        }
+        voterMenu();
     }
 
     public static void voterMenu(){
@@ -105,9 +121,8 @@ public class Election {
                                BIVAS VOTE MENU
                         ==============================
                         1 -> Cast Vote
-                        2 -> Check Vote Result
-                        3 -> Login Menu
-                        4 -> Main Menu
+                        2 -> Login Menu
+                        3 -> Main Menu
                         ==============================
                             Select an Option:
                         ==============================
@@ -116,10 +131,8 @@ public class Election {
         String voterOption = input("Enter option: ");
         switch (voterOption){
             case "1" :
-                Vote();
+                castVote();
             case "2":
-                checkResult();
-            case "3":
                 loginMenu();
             default:
                 displayMenu();
@@ -127,36 +140,41 @@ public class Election {
 
     }
 
-    private static void Vote() {
-        String votingCategory = """
+    public static void candidateMenu(){
+        String candidateMenu = """
                         ==============================
-                               VOTE CATEGORY
+                               BIVAS VOTE MENU
                         ==============================
-                        1 -> President
-                        2 -> Governor
-                        3 -> Senator
-                        4 -> Vote Menu
+                        1 -> Check result
+                        2 -> Login Menu
+                        3 -> Main Menu
                         ==============================
                             Select an Option:
                         ==============================
                 """;
-        display(votingCategory);
-        String votingOption = input("Select Option: ");
-        switch (votingOption){
-            case "1": 
-                castPresidentVote();
-            case "2": 
-                castGovernorVote();
-            case "3": 
-                castSenatorVote();
+        display(candidateMenu);
+        String voterOption = input("Enter option: ");
+        switch (voterOption){
+            case "1" :
+                checkResult();
+            case "2":
+                loginMenu();
             default:
-                voterMenu();
-                
+                displayMenu();
         }
     }
 
-    private static void castPresidentVote() {
+    private static void checkResult() {
+        String candidateID = input("Enter candidate ID: ");
+        inec.displayResult(candidateID);
+    }
 
+    private static void castVote() {
+        String votersID = input("Enter Voter's ID: ");
+        String candidateID = input("Enter Candidate's ID: ");
+        inec.castVote(votersID, candidateID);
+        display("VOTE CASTED!!!");
+        voterMenu();
     }
 
     private static String input(String message){
@@ -164,6 +182,7 @@ public class Election {
         display(message);
         return sc.nextLine();
     }
+
     private static void display(String message){
         System.out.println(message);
     }
