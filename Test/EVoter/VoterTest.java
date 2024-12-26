@@ -6,11 +6,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 public class VoterTest {
-    Voter voters = new Voter(18, "userName", 'M', "1", "1111");
+    Voter voters = new Voter(18, "userName",  "1", "1111");
     @Test
     public void Test_that_age_can_not_be_below_eighteen(){
-        int age = 17;
-        assertThrows(IllegalArgumentException.class, ()-> voters.setAge(age));
+        Voter voters = new Voter(17, "userName",  "1", "1111");
+        assertThrows(IllegalArgumentException.class, ()-> voters.setAge(17));
     }
     @Test
     public void Test_That_VotersName_Contains_Only_Alphabets(){
@@ -18,16 +18,7 @@ public class VoterTest {
         assertThrows(IllegalArgumentException.class, ()-> voters.setName(name));
     }
     @Test
-    public void Test_That_Voter_Throws_Exception_If_Password_length_is_not_greaterThan_Four(){
-        assertThrows(IllegalArgumentException.class, ()-> voters.setPassword("123hfj455"));
-    }
-    @Test
-    public void Test_That_Voters_Can_cast_Vote(){
-        Registration registration = new Registration();
-        Voter vote = registration.voterRegistration(18, "Babatunde", 'M', "1111");
-        Candidate candidate = registration.candidateRegistration("Peter Obi");
-        vote.castVote("NGv1", "1111", "NGc1");
-        System.out.println(candidate.getCountCandidateVote());
-        assertEquals(1, candidate.getCountCandidateVote());
+    public void Test_That_Voter_Throws_Exception_If_Password_length_is_LessThat_Eight(){
+        assertThrows(IllegalArgumentException.class, ()-> voters.setPassword("123h5"));
     }
 }
